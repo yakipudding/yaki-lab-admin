@@ -54,7 +54,7 @@ function AboutForm(props: {init : AboutInterface, submit: (about: AboutInterface
         </Grid>
         <Grid item xs={12}>
           <ImageUploadButton handleChangeImage={handleChangeImage} />
-          <img src={values.icon} width="120px" />
+          <img src={values.icon} alt="icon" width="120px" />
           <p>
             {values.icon}
           </p>

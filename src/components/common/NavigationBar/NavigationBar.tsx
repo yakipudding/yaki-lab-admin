@@ -28,21 +28,12 @@ const NavigationStyle = makeStyles(theme => ({
 const NavigationBar = (props: PageProps) => {
   const classes = NavigationStyle();
   const path = props.location.pathname
-  const admin = path.startsWith("/Admin")
   let tabIndex = 0
-  if(admin){
-    tabIndex = path === "/AdminDashboard" 
-            || path === "/AdminNewArticle" 
-            || path.startsWith("/AdminEditArticle") ? 0
-              : path === "/AdminEditAbout" ? 2
-              : 1
-  } 
-  else{
-    tabIndex = path === "/" ? 0
-              : path.startsWith("/Product") ? 1
-              : path === "/About"? 2
-              : 0
-  }
+  tabIndex = path === "/"
+          || path === "/AdminNewArticle" 
+          || path.startsWith("/AdminEditArticle") ? 0
+            : path === "/AdminEditAbout" ? 2
+            : 1
 
   return (
     <AppBar position="static" color="primary" elevation={0} className={classes.appBar}>
@@ -53,9 +44,9 @@ const NavigationBar = (props: PageProps) => {
               焼きらぼ。
             </Link>
           </Typography>
-          {admin ? "管理者モード" : ""}
+          {"管理者モード"}
         </Toolbar>
-        <TabMenu index={tabIndex} admin={admin} />
+        <TabMenu index={tabIndex} />
       </Container>
     </AppBar>
   );

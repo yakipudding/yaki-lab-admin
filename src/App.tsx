@@ -6,11 +6,6 @@ import AppStyle from './AppStyle'
 import Theme from './style/Theme'
 import NavigationBar from './components/common/NavigationBar/NavigationBar'
 import NotFound from './components/common/FeedBack/NotFound'
-import Articles from './components/page/Article/Articles'
-import Products from './components/page/Product/Products'
-import Product from './components/page/Product/Product'
-import Article from './components/page/Article/Article'
-import About from './components/page/About/About'
 import CheckAdmin from './components/admin/CheckAdmin'
 import AdminDashboard from './components/admin/Article/AdminDashboard'
 import AdminNewArticle from './components/admin/Article/AdminNewArticle'
@@ -32,16 +27,7 @@ const App = () => {
           <Route component={NavigationBar} />
           <Container maxWidth="lg" className={classes.container}>
             <Switch>
-              <Route exact path='/' component={Articles} />
-              <Route exact path='/Articles' component={Articles} />
-              <Route exact path='/Articles/:tag' component={Articles} />
-              <Route exact path='/Article/:id' component={Article} />
-              <Route exact path='/Products' component={Products} />
-              <Route exact path='/Products/:tag' component={Products} />
-              <Route exact path='/Product/:productId/:articleId' component={Product} />
-              <Route exact path='/About' component={About} />
-              {/* admin */}
-              <Route exact path='/AdminDashboard' component={CheckAdmin(AdminDashboard)} />
+              <Route exact path='/' component={CheckAdmin(AdminDashboard)} />
               <Route exact path='/AdminNewArticle' component={CheckAdmin(AdminNewArticle)} />
               <Route exact path='/AdminEditArticle/:id' component={CheckAdmin(AdminEditArticle)} />
               <Route exact path='/AdminProductDashboard' component={CheckAdmin(AdminProductDashboard)} />
