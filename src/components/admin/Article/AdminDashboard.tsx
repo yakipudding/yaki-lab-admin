@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import CreateIcon from '@material-ui/icons/Create';
@@ -9,33 +10,31 @@ import { getArticles, updateArticleWithoutContent, deleteArticle } from '../../.
 import Loading from '../../common/FeedBack/Loading'
 
 // 管理者用ダッシュボード
-const AdminDashboard = (props:PageProps ) => {
-  interface TableState {
-    columns: Column<ArticleInterface>[];
-    data: ArticleInterface[];
-  }
+const useStyles = makeStyles(theme => ({
+  table: {
+    fontSize: '0.9rem'
+  },
+}));
 
-  const [state, setState] = useState<TableState>(
-    {
-      columns: [
-        { title: 'Date', field: 'date' },
-        { title: 'Title', field: 'title' },
-        { title: 'Category', field: 'category', lookup: {10: '技術', 20: '仕事', 30:'生活'} },
-        { title: 'Tags', field: 'tags' },
-        { title: 'URL', field: 'url' },
-        { title: 'Private', field: 'private', type: 'boolean' },
-      ],
-      data: []
-    })
+const AdminDashboard = (props:PageProps ) => {  
+  const classes = useStyles();  
 
+  const columns:Column<ArticleInterface>[] = [
+    { title: 'Date', field: 'date' },
+    { title: 'Title', field: 'title', width: 300, },
+    { title: 'Category', field: 'category', lookup: {10: '技術', 20: '仕事', 30:'生活'} },
+    { title: 'Tags', field: 'tags' },
+    { title: 'URL', field: 'url', render: (rowData: ArticleInterface) => { return rowData?.url ? <a href={rowData.url} target="_blank" rel="noopener noreferrer">URL</a> : null } },
+    { title: 'Private', field: 'private', type: 'boolean' },
+  ]
+
+  const [articles, setArticles] = useState<ArticleInterface[]>([])
   useEffect(() => {
     // firestoreから取得
     getArticles(true).then((articlesfromDB) => {
-      setState({ 
-        columns: state.columns,
-        data: articlesfromDB })
+      setArticles(articlesfromDB)
     })
-  }, [state.columns]);
+  }, []);
 
 const onRowUpdate = (newData : ArticleInterface, oldData : ArticleInterface | undefined) =>
   new Promise(resolve => {
@@ -44,10 +43,10 @@ const onRowUpdate = (newData : ArticleInterface, oldData : ArticleInterface | un
       if (oldData) {
         // firestore更新
         updateArticleWithoutContent(newData)
-        setState(prevState => {
-          const data = [...prevState.data];
+        setArticles(prevState => {
+          const data = prevState;
           data[data.indexOf(oldData)] = newData;
-          return { ...prevState, data };
+          return data;
         });
       }
     }, 600);
@@ -60,10 +59,10 @@ const onRowDelete = (oldData : ArticleInterface | undefined) =>
       if (oldData) {
         // firestore削除
         deleteArticle(oldData.id)
-        setState(prevState => {
-          const data = [...prevState.data];
+        setArticles(prevState => {
+          const data = prevState;
           data.splice(data.indexOf(oldData), 1);
-          return { ...prevState, data };
+          return data;
         });
       }
     }, 600);
@@ -81,17 +80,19 @@ const onRowDelete = (oldData : ArticleInterface | undefined) =>
           Create New Articre
         </Button>
       </Grid>
-      <Grid item xs={12}>
-    { state.data.length !== 0 ? 
+      <Grid item xs={12} className={classes.table}>
+    { articles.length !== 0 ? 
       <MaterialTable
         title="Articles"
-        columns={state.columns}
-        data={state.data as ArticleInterface[]}
+        columns={columns}
+        data={articles as ArticleInterface[]}
         options={{ 
           pageSize: 8,
           pageSizeOptions: [8, 20, 30],
           filtering: true,
           search: false,
+          tableLayout: 'fixed',
+          padding: 'dense',
         }}
         actions={[
           {
